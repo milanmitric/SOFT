@@ -37,7 +37,7 @@ def extract_number(x, y,warp_gray):
     for i in range(im_number.shape[0]):
         for j in range(im_number.shape[1]):
             dist_center = math.sqrt( (IMAGE_WIDTH/2 - i)**2  + (IMAGE_HEIGHT/2 - j)**2);
-            if dist_center > 9:
+            if dist_center > 8:
                 im_number_thresh[i,j] = 0;
 
     n_active_pixels = cv2.countNonZero(im_number_thresh)
