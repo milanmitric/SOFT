@@ -3,8 +3,8 @@ import cv2
 import matplotlib.pyplot as plt
 import math
 
-IMAGE_WIDTH = 16
-IMAGE_HEIGHT = 16
+IMAGE_WIDTH = 28
+IMAGE_HEIGHT = 28
 SUDOKU_SIZE = 9
 N_MIN_ACTIVE_PIXELS = 10
 
@@ -37,7 +37,7 @@ def extract_number(x, y,warp_gray):
     for i in range(im_number.shape[0]):
         for j in range(im_number.shape[1]):
             dist_center = math.sqrt( (IMAGE_WIDTH/2 - i)**2  + (IMAGE_HEIGHT/2 - j)**2);
-            if dist_center > 6:
+            if dist_center > 9:
                 im_number_thresh[i,j] = 0;
 
     n_active_pixels = cv2.countNonZero(im_number_thresh)
@@ -82,7 +82,7 @@ def Recognize_number( x, y,warp_gray):
         number = im_t[y_b:y_b+h, x_b:x_b+w]
 
         if number.shape[0]*number.shape[1]>0:
-            number = cv2.resize(number, (IMAGE_WIDTH, IMAGE_HEIGHT), interpolation=cv2.INTER_LINEAR)
+            number = cv2.resize(number, (IMAGE_WIDTH, IMAGE_HEIGHT), interpolation=cv2.INTER_LANCZOS4)
             ret,number2 = cv2.threshold(number, 127, 255, 0)
             number = number2.reshape(1, IMAGE_WIDTH*IMAGE_HEIGHT)
             sudoku[x*9+y, :] = number;
