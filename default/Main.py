@@ -14,7 +14,7 @@ import re
 from keras.utils import np_utils
 
 # Ucitavanje slike
-img = cv2.imread('sudokuIn3.jpg')
+img = cv2.imread('sudokuIn2.png')
 
  #Testiranje prikaza
 cv2.imshow('image',img)
@@ -25,9 +25,9 @@ cv2.destroyAllWindows()
 gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 # Binarizacija slike
 thresh = cv2.adaptiveThreshold(gray,255,1,1,15,17)
-#cv2.imshow('image',thresh)
-#cv2.waitKey(0)
-#cv2.destroyAllWindows()
+cv2.imshow('image',thresh)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
 
 # Pronadji konture
 _ ,contours, hierarchy = cv2.findContours(thresh,
@@ -36,7 +36,6 @@ _ ,contours, hierarchy = cv2.findContours(thresh,
 
 # Sirina i velicina slike
 height,width =  img.shape[:2]
-print("Height: " + str(height) + " width: " + str(width))
 # Kopiraj sliku
 img_candidates = img.copy()
 
@@ -75,7 +74,9 @@ for i in range (len(approximation)):
                  (big_rectangle[((i+1)%4)][0][0], big_rectangle[((i+1)%4)][0][1]),
                  (255, 0, 0), 2)
 
-
+cv2.imshow('image',img_candidates)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
 # Tacke u remap
 points1 = np.array([
                     np.array([0.0,0.0] ,np.float32) + np.array([252,0], np.float32),
@@ -95,9 +96,9 @@ warp = cv2.flip(warp,1)
 warp_gray = cv2.cvtColor(warp, cv2.COLOR_BGR2GRAY)
 # Remapiraj sliku
 
-#cv2.imshow('image',warp_gray)
-#cv2.waitKey(0)
-#cv2.destroyAllWindows()
+cv2.imshow('image',warp_gray)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
 
 
 index_subplot=0
@@ -142,18 +143,33 @@ for j in range(len(test)):
             tmp.append(tmparray)
             tmparray = []
    tmp = np.array(tmp)
-#   tmp = hf.erode(hf.dilate(tmp))
+   #tmp = hf.erode(hf.dilate(tmp))
    cv2.imwrite('tmp.png',tmp)
    imagefile = Image.open('tmp.png')
    tekst = pytesser.image_to_string(imagefile)
+
    tekst = tekst.translate(None,'\n')
    tekst = tekst.translate(None,',')
+
    if tekst == '\"I':
        tekst = '1'
    elif tekst == 'Z':
        tekst = '2'
    elif tekst == '`I':
        tekst = '1'
+   elif tekst == 'S':
+       tekst = '5'
+   elif tekst == "'I":
+       tekst = '1'
+   elif tekst == 'I':
+       tekst = '1'
+   elif tekst == "?'":
+       tekst = '7'
+   elif tekst == '~7':
+       tekst = '7'
+   elif tekst == '`[':
+       tekst = '1'
+   print tekst
    startNums.append(int(tekst))
    tmp = []
 
@@ -171,21 +187,22 @@ for i in range(len(sudokuMatrix)):
 
 
 sudokuMatrix  = sudokuFinal
-print sudokuMatrix;
+
 
 import solveSudoku as s
-s.solveSudoku(sudokuMatrix)
-print sudokuMatrix
+if (s.solveSudoku(sudokuMatrix) == True):
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    for i in range(len(sudokuMatrix)):
+        for j in range(len(sudokuMatrix[i])):
+            if not(indexes_numbers.__contains__(i*9+j)):
+                #print str(sudokuMatrix[i][j])
 
-font = cv2.FONT_HERSHEY_SIMPLEX
-for i in range(len(sudokuMatrix)):
-    for j in range(len(sudokuMatrix[i])):
-        if not(indexes_numbers.__contains__(i*9+j)):
-            #print str(sudokuMatrix[i][j])
-
-            cv2.putText(warp,str(sudokuMatrix[i][j]),((j)*28, (i+1)*27 ),font,0.6,(0,0,0),1)
+                cv2.putText(warp,str(sudokuMatrix[i][j]),((j)*29, (i+1)*27 ),font,0.6,(0,0,0),1)
 
 
-cv2.imshow("img",warp)
-cv2.waitKey(0)
+    cv2.imshow("img",warp)
+    cv2.waitKey(0)
+else:
+    print 'Ne moze se rijesiti sudoku: '
+    print sudokuFinal
 
