@@ -28,12 +28,12 @@ def getOuterPoints(rcCorners):
     return (ar[3],ar[0],ar[1],ar[2])
 
 def extract_number(x, y,warp_gray):
-    #square -> position x-y
+    # Pravougaonik sa x,y koordinatama
     im_number = warp_gray[x*IMAGE_HEIGHT:(x+1)*IMAGE_HEIGHT][:, y*IMAGE_WIDTH:(y+1)*IMAGE_WIDTH]
 
-    #threshold
+    # Uradi threshold
     im_number_thresh = cv2.adaptiveThreshold(im_number,255,1,1,15,9)
-    #delete active pixel in a radius (from center)
+    # Obrisi aktivne piksele u nekom precniku od centra.
     for i in range(im_number.shape[0]):
         for j in range(im_number.shape[1]):
             dist_center = math.sqrt( (IMAGE_WIDTH/2 - i)**2  + (IMAGE_HEIGHT/2 - j)**2);
@@ -56,7 +56,7 @@ def find_biggest_bounding_box(im_number_thresh):
          if  size_bound_rect  > bound_rect_max_size:
              bound_rect_max_size = size_bound_rect
              biggest_bound_rect = bound_rect
-    #bounding box a little more bigger
+    # Okruzujuci pravougaonik mora biti malo veci.
     x_b, y_b, w, h = biggest_bound_rect;
     x_b= x_b-1;
     y_b= y_b-1;
@@ -65,14 +65,12 @@ def find_biggest_bounding_box(im_number_thresh):
 
     return [x_b, y_b, w, h]
 
-#sudoku representation
+# Reprezzentacija sudokua.
 sudoku = np.zeros(shape=(9*9,IMAGE_WIDTH*IMAGE_HEIGHT))
 
+# Prepoznavanje broja u pravougaoniku
 def Recognize_number( x, y,warp_gray):
-    """
-    Recognize the number in the rectangle
-    """
-    #extract the number (small squares)
+    # Izvuci broj
     [im_number, im_number_thresh, n_active_pixels] = extract_number(x, y,warp_gray)
 
     if n_active_pixels> N_MIN_ACTIVE_PIXELS:

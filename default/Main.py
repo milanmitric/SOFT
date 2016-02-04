@@ -94,8 +94,8 @@ warp = cv2.warpPerspective(img_candidates, pers, (functions.SUDOKU_SIZE*function
 # Posto slika dobijena ovako bude reflektovana potrebno je vratiti
 warp = cv2.flip(warp,1)
 warp_gray = cv2.cvtColor(warp, cv2.COLOR_BGR2GRAY)
-# Remapiraj sliku
 
+# Prikaz izdvojenog sudokua
 cv2.imshow('image',warp_gray)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
@@ -113,18 +113,14 @@ for i in range(functions.SUDOKU_SIZE):
             indexes_numbers.insert(n_numbers, i*9+j)
             n_numbers=n_numbers+1
 
-#create subfigures
+# Kreiraj za prikaz - NE KORISTI SE VISE.
 f,axarr= pl.subplots(index_subplot,5)
 
-width = 0;
+# Niz u kome se cuvaju izdvojeni brojevi iz pocetnog problema.
 test = []
 for i in range(len(indexes_numbers)):
     ind = indexes_numbers[i]
     test.append(functions.sudoku[ind])
-
-
-
-
 rows = np.vsplit(warp_gray,9);
 # Matrica brojeva
 sudokuMatrix = np.zeros((81,),dtype=np.int);
@@ -195,8 +191,6 @@ if (s.solveSudoku(sudokuMatrix) == True):
     for i in range(len(sudokuMatrix)):
         for j in range(len(sudokuMatrix[i])):
             if not(indexes_numbers.__contains__(i*9+j)):
-                #print str(sudokuMatrix[i][j])
-
                 cv2.putText(warp,str(sudokuMatrix[i][j]),((j)*29, (i+1)*27 ),font,0.6,(0,0,0),1)
 
 
